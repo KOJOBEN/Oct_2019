@@ -1,0 +1,80 @@
+IF EXISTS(Select 1  FROM sysobjects with (NOLOCK)  
+WHERE ID  =OBJECT_ID(N'[dbo].[AIRLINES_AREAS]') AND type =(N'U'))
+
+Drop TABLE [dbo].[AIRLINES_AREAS]
+
+CREATE TABLE [dbo].[AIRLINES_AREAS] (
+    [ID ] varchar(50)NULL,
+    [Region] varchar(50)NULL,
+    [ Revenue] varchar(50)NULL
+) ON [PRIMARY]
+GO
+UPDATE [dbo].[AIRLINES_AREAS]
+SET [Region]= Lower([Region])
+
+
+UPDATE [dbo].[AIRLINES_AREAS]
+SET [Region]= UPPER([Region])
+GO
+DROP TABLE [AIRLINES_AREAS]
+TRUNCATE TABLE [AIRLINES_AREAS]
+SELECT * FROM [AIRLINES_AREAS]
+
+
+SELECT TOP (1000) [id]
+      ,[event]
+     ,[message]
+  FROM [UNION_JOIN].[dbo].[sysssislog]
+  TRUNCATE DROP TABLE [dbo].[sysssislog]
+
+
+  IF EXISTS(Select 1  FROM sysobjects with (NOLOCK)  
+WHERE ID  =OBJECT_ID(N'[dbo].[Error_Logs]') AND type =(N'U'))
+
+Drop TABLE [dbo].[Error_Logs]
+
+CREATE TABLE [dbo].[Error_Logs] ([ID ] INT IDENTITY,MachineName varchar(200),PackageName varchar(200),TaskName varchar(200),ErrorCode int,ErrorDescription varchar(Max),Dates DATETIME)
+ GO
+   
+Insert into Error_Logs values ('(Local)','MyPackage.dtsx','MyDPT',102,'Unable to locate file',getdate())
+go
+
+select * from Error_Logs
+WAITFOR DELAY '00:00:20'
+GO
+
+IF EXISTS ( SELECT * FROM dbo.sysobjects Where id = OBJECT_ID (N'Emp_Source') AND  OBJECTPROPERTY(id, N'IsUserTable') =1)
+DROP TABLE Emp_Source
+CREATE TABLE Emp_Source(Empid int,FirstName varchar(50),LastName  varchar(50),Designation varchar(50))
+GO
+insert into Emp_Source values(100,'Thomas','Kwasi','Software Enginer')
+insert into Emp_Source values(101,'Bernard','Ampaw','ETL Developer')
+insert into Emp_Source values(102,'Malik','Aberedu','Hadoop Developer')
+insert into Emp_Source values(103,'Fredrick','Oteng_Mensah','Tableau Enginer')
+insert into Emp_Source values(104,'Heer','Erda','CRH PREFRERED REWARD Enginer')
+go
+IF EXISTS (SELECT * FROM dbo.sysobjects Where id =OBJECT_ID (N'DimEmployee') AND OBJECTPROPERTY(id, N'IsUserTable') =1)
+DROP TABLE DimEmployee
+CREATE TABLE DimEmployee(ID int identity,Empid int, FirstName varchar(50),LastName  varchar(50),
+Designation varchar(50),StartDate datetime,EndDate datetime)
+go
+select * from Emp_Source
+select * from DimEmployee
+----SCD_type 1 changing attribute
+update Emp_Source
+set LastName = 'Oferi'
+WHERE Empid = '100'
+----SCD_TYPE 2 HISTORICAL ATTRIBUTE
+Update Emp_Source
+set Designation= 'Senior ETL Developer'
+WHERE Empid = '101'
+----SCD_Type 3 Fixed Attribute
+Update Emp_Source
+set FirstName= 'Mensah'
+WHERE Empid = '103'
+
+
+
+
+TRUNCATE TABLE Emp_Source
+TRUNCATE TABLE DimEmployee
