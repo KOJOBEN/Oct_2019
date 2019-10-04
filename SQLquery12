@@ -76,5 +76,4 @@ WHERE Empid = '103'
 
 
 
-TRUNCATE TABLE Emp_Source
-TRUNCATE TABLE DimEmployee
+
